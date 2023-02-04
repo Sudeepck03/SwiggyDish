@@ -36,8 +36,8 @@ async function Getdata(url,page) {
 
       for (const dishElement of dishElements) {
         const dishName = await dishElement.$eval('h3', node => node.textContent);
-        let dishPrice = await dishElement.$eval('.rupee', node => node.textContent);//50
-        let discount = (dishPrice * percentage) / 100
+        let dishPrice = await dishElement.$eval('.rupee', node => node.textContent);
+        let discount = (dishPrice * percentage)
 
         let dishPriceAfterDiscount = discount < limit ? dishPrice - discount : dishPrice - limit;
         dishes.push({ dishName, dishPrice: Math.abs(dishPriceAfterDiscount) });
@@ -60,13 +60,9 @@ async function main(){
         let page = await browser.newPage();
 
         const arr = [];
-        let j=0;
         for(let link of allLinks){
-          if(j<1){
                 const data = await Getdata(link,page);
                     arr.push(data)
-                    j+=1
-          }
         }
        
         for(let i of arr){
