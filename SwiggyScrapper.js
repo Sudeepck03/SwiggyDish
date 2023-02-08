@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 
 
-let str = "Restuarnts are :" + " " +  "\n";
+let resturantsAndDishes = "Restuarnts are :" + " " +  "\n";
 let counter = 0;
 
 
@@ -12,7 +12,7 @@ app.get('/dishes',async(req,res)=>{
     let {city,restaurants} = req.query
     const resturantData =await main(city,restaurants);
     req.dishes = resturantData
-    let requiredResturantData = str
+    let requiredResturantData = resturantsAndDishes
     console.log(requiredResturantData)
 
     let transporter = nodemailer.createTransport({
@@ -95,7 +95,7 @@ async function Getdata(url,page,filteredRestuarnt) {
 
     let finalPrice = 0;
     counter++;
-    str += counter +" ." + hotelName +":" + " " 
+    resturantsAndDishes += counter +" ." + hotelName +":" + " " 
       for (const dishElement of dishElements) {
         const dishName = await dishElement.$eval('h3', node => node.textContent);
         let dishPrice = Number(await dishElement.$eval('.rupee', node => node.textContent));
@@ -104,16 +104,16 @@ async function Getdata(url,page,filteredRestuarnt) {
         if(isNaN(dishPriceAfterDiscount)){
             dishes.push({ dishName, dishPrice})
              finalPrice += Number(dishPrice)
-             if(dishPrice >= 20 && dishPrice <= 300) str += dishName +","
+             if(dishPrice >= 20 && dishPrice <= 300) resturantsAndDishes += dishName +","
         }else{
             dishes.push({ dishName, dishPrice: dishPriceAfterDiscount}); 
             finalPrice += Number(dishPriceAfterDiscount)
-           if(dishPriceAfterDiscount >= 20 && dishPriceAfterDiscount <= 300) str += dishName +" ,"
+           if(dishPriceAfterDiscount >= 20 && dishPriceAfterDiscount <= 300) resturantsAndDishes += dishName +" ,"
         }   
     }
     finalPrice = Number(finalPrice)
    
-    str += ":" + finalPrice
+    resturantsAndDishes += ":" + finalPrice
    
       // Filter dishes within the price range
     filteredDishes = dishes.filter(dish => dish.dishPrice >= 20 && dish.dishPrice <= 300);
@@ -145,5 +145,5 @@ async function main(city,restaurants){
         }
    
     await browser.close()
-    return str;
+    return resturantsAndDishes;
 }
